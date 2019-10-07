@@ -9,7 +9,7 @@ Check out DingTalk Open API document at: http://open.dingtalk.com
 Fetch the SDK
 ```
 export GOPATH=`pwd`
-go get github.com/hugozhu/godingtalk
+go get github.com/soopsio/godingtalk
 ```
 
 ### Example code to send a micro app message
@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-    c := godingtalk.NewDingTalkClient(os.Getenv("corpid"), os.Getenv("corpsecret"))
+    c := godingtalk.NewDingTalkClient(os.Getenv("appkey"), os.Getenv("appsecret"))
     c.RefreshAccessToken()
     err := c.SendAppMessage(os.Args[1], os.Args[2], os.Args[3])
     if err != nil {
@@ -48,8 +48,8 @@ http://hugozhu.myalert.info/2016/05/02/66-use-dingtalk-golang-sdk-to-send-messag
 export GOPATH=`pwd`
 go get github.com/hugozhu/godingtalk/demo/ding_alert
 
-export corpid=<组织的corpid 通过 https://oa.dingtalk.com 获取>
-export corpsecret=<组织的corpsecret 通过 https://oa.dingtalk.com 获取>
+export appkey=<应用的appkey 通过 https://oa.dingtalk.com 获取>
+export appsecret=<应用的appsecret 通过 https://oa.dingtalk.com 获取>
 
 ./bin/ding_alert
 Usage of ./bin/ding_alert:
@@ -80,21 +80,21 @@ more info at: http://hugozhu.myalert.info/2016/05/15/67-use-free-google-cloud-se
 
 ```
 export GOPATH=`pwd`
-go get github.com/hugozhu/godingtalk/demo/github/appengine
+go get github.com/soopsio/godingtalk/demo/github/appengine
 ```
 
 Modify `app.yaml`
 
 ```
-cd src/github.com/hugozhu/godingtalk/demo/github/appengine
+cd src/github.com/soopsio/godingtalk/demo/github/appengine
 cat app.yaml
 application: github-alert-<random_number>
 version: 1
 runtime: go
 api_version: go1
 env_variables:
-  CORP_ID: '<从 http://oa.dingtalk.com 获取>'
-  CORP_SECRET: '<从 http://oa.dingtalk.com 获取>'
+  APP_KEY: '<从 http://oa.dingtalk.com 获取>'
+  APP_SECRET: '<从 http://oa.dingtalk.com 获取>'
   GITHUB_WEBHOOK_SECRET: '<从 http://github.com/ 获取>'
   SENDER_ID: '<从 http://open.dingtalk.com 调用api获取>'
   CHAT_ID: '<从 http://open.dingtalk.com 调用api获取>'
