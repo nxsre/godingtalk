@@ -39,7 +39,7 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client.RefreshAccessToken()
-	err := client.SendTextMessage(sender, chatid, content)
+	_,err := client.SendTextMessage(sender, chatid, content)
 	if err != nil {
 		resp.ErrCode = -1
 		resp.ErrMsg = err.Error()

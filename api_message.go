@@ -23,6 +23,22 @@ func (c *DingTalkClient) SendAppMessage(agentID string, touser string, msg strin
 	return err
 }
 
+//SendAppActionCardMessage
+func (c *DingTalkClient) SendAppActionCardMessage(agentID string, touser string, msg ActionCardMessage) error {
+	if agentID == "" {
+		agentID = c.AgentID
+	}
+	var data OAPIResponse
+	request := map[string]interface{}{
+		"touser":  touser,
+		"agentid": agentID,
+		"msgtype": "action_card",
+		"action_card":      msg,
+	}
+	err := c.httpRPC("message/send", nil, request, &data)
+	return err
+}
+
 //SendAppOAMessage is 发送OA消息
 func (c *DingTalkClient) SendAppOAMessage(agentID string, touser string, msg OAMessage) error {
 	if agentID == "" {
@@ -132,6 +148,22 @@ func (c *DingTalkClient) SendLinkMessage(sender string, cid string, mediaID stri
 	}
 	err = c.httpRPC("chat/send", nil, request, &data)
 	return data, err
+}
+
+// ActionCardMessage is the Message for ActionCard
+type ActionCardMessage struct {
+	Title          string                 `json:"title"`
+	Markdown       string                 `json:"markdown"`
+	SingleTitle    string                 `json:"single_title,omitempty"`
+	SingleUrl      string                 `json:"single_url,omitempty"`
+	BtnOrientation string                 `json:"btn_orientation,omitempty"`
+	BtnJsonList    []ActionCardMessageBtn `json:"btn_json_list,omitempty"`
+}
+
+// ActionCardMessageBtn
+type ActionCardMessageBtn struct {
+	Title     string `json:"title"`
+	ActionUrl string `json:"action_url"`
 }
 
 //OAMessage is the Message for OA
