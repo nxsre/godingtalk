@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"net/url"
+	"strconv"
+	"time"
 )
 
 //获取钉钉开放应用ACCESS_TOKEN
@@ -113,17 +115,17 @@ func (c *DingTalkClient) GetSnsUserInfo(snsToken string) (SnsUserInfoResponse, e
 func (c *DingTalkClient) GetSnsUserInfoByCode(code string) (SnsUserInfoResponse, error) {
 	params := url.Values{}
 
-	timestamp := time.Now().UnixNano() / 1e6
+	timestamp := strconv.FormatInt(time.Now().UnixNano()/1e6, 10)
 	key := []byte(c.AppSecret)
 	h := hmac.New(sha256.New, key)
 	h.Write([]byte(timestamp))
 	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
-	params.Add("signature", url.QueryEscape(signature))
+	params.Add("signature", signature)
 	params.Add("timestamp", timestamp)
 	params.Add("accessKey", c.AppKey)
 
 	var data SnsUserInfoResponse
-	err := c.httpRequest("sns/getuserinfo_bycode", params, nil, &data)
+	err := c.httpRequest("sns/getuserinfo_bycode", params, map[string]string{"tmp_auth_code": code}, &data)
 	return data, err
 }
