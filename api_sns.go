@@ -1,7 +1,10 @@
 //普通钉钉用户账号开放相关接口
 package godingtalk
 
-import(
+import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"net/url"
 )
 
@@ -17,7 +20,7 @@ func (c *DingTalkClient) RefreshSnsAccessToken() error {
 	params.Add("appsecret", c.SnsAppSecret)
 
 	err := c.httpRPC("sns/gettoken", params, nil, &data)
-	if err==nil {
+	if err == nil {
 		c.SnsAccessToken = data.AccessToken
 	}
 	return err
@@ -44,12 +47,11 @@ func (c *DingTalkClient) GetSnsPersistentCode(tmpAuthCode string) (string, strin
 
 	var data SnsPersistentCodeResponse
 	err := c.httpRequest("sns/get_persistent_code", params, request, &data)
-	if err!=nil {
-		return "","","",err
+	if err != nil {
+		return "", "", "", err
 	}
 	return data.UnionID, data.OpenID, data.PersistentCode, nil
 }
-
 
 type SnsTokenResponse struct {
 	OAPIResponse
@@ -65,13 +67,13 @@ func (c *DingTalkClient) GetSnsToken(openid, persistentCode string) (string, err
 	params.Add("access_token", c.SnsAccessToken)
 
 	request := map[string]interface{}{
-		"openid": openid,
+		"openid":          openid,
 		"persistent_code": persistentCode,
 	}
 
 	var data SnsTokenResponse
 	err := c.httpRequest("sns/get_sns_token", params, request, &data)
-	if err!=nil {
+	if err != nil {
 		return "", err
 	}
 	return data.SnsToken, err
@@ -80,19 +82,19 @@ func (c *DingTalkClient) GetSnsToken(openid, persistentCode string) (string, err
 type SnsUserInfoResponse struct {
 	OAPIResponse
 
-	CorpInfo []struct{
-		CorpName string `json:"corp_name"`
-		IsAuth bool `json:"is_auth"`
-		IsManager bool `json:"is_manager"`
-		RightsLevel int `json:"rights_level"`
+	CorpInfo []struct {
+		CorpName    string `json:"corp_name"`
+		IsAuth      bool   `json:"is_auth"`
+		IsManager   bool   `json:"is_manager"`
+		RightsLevel int    `json:"rights_level"`
 	} `json:"corp_info"`
 
 	UserInfo struct {
 		MaskedMobile string `json:"marskedMobile"`
-		Nick string `json:"nick"`
-		OpenID string `json:"openid"`
-		UnionID string `json:"unionid"`
-		DingID string `json:"dingId"`
+		Nick         string `json:"nick"`
+		OpenID       string `json:"openid"`
+		UnionID      string `json:"unionid"`
+		DingID       string `json:"dingId"`
 	} `json:"user_info"`
 }
 
@@ -105,5 +107,23 @@ func (c *DingTalkClient) GetSnsUserInfo(snsToken string) (SnsUserInfoResponse, e
 
 	var data SnsUserInfoResponse
 	err := c.httpRequest("sns/getuserinfo", params, nil, &data)
+	return data, err
+}
+
+func (c *DingTalkClient) GetSnsUserInfoByCode(code string) (SnsUserInfoResponse, error) {
+	params := url.Values{}
+
+	timestamp := time.Now().UnixNano() / 1e6
+	key := []byte(c.AppSecret)
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(timestamp))
+	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
+
+	params.Add("signature", url.QueryEscape(signature))
+	params.Add("timestamp", timestamp)
+	params.Add("accessKey", c.AppKey)
+
+	var data SnsUserInfoResponse
+	err := c.httpRequest("sns/getuserinfo_bycode", params, nil, &data)
 	return data, err
 }
