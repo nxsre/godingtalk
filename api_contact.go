@@ -29,6 +29,8 @@ type User struct {
 
 type UserInfo struct {
 	OAPIResponse
+	UnionId   string `json:"unionid"`
+	OpenId  string `json:"openid"`
 	Userid          string      `json:"userid"`
 	Roles           []Role      `json:"roles"`
 	IsLeaderInDepts string      `json:"isLeaderInDepts"`
