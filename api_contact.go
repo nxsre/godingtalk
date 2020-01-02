@@ -29,8 +29,8 @@ type User struct {
 
 type UserInfo struct {
 	OAPIResponse
-	UnionId   string `json:"unionid"`
-	OpenId  string `json:"openid"`
+	UnionId         string      `json:"unionid"`
+	OpenId          string      `json:"openid"`
 	Userid          string      `json:"userid"`
 	Roles           []Role      `json:"roles"`
 	IsLeaderInDepts string      `json:"isLeaderInDepts"`
@@ -50,6 +50,10 @@ type UserInfo struct {
 	Name            string      `json:"name"`
 	StateCode       string      `json:"stateCode"`
 	Position        string      `json:"position"`
+	Email           string      `json:"email"`
+	Remark          string      `json:"remark"`
+	Tel             string      `json:"tel"`
+	WorkPlace       string      `json:"workPlace"`
 }
 
 type Role struct {
