@@ -39,7 +39,7 @@ type UserInfo struct {
 	IsSenior        bool        `json:"isSenior"`
 	Department      []int       `json:"department"`
 	OrderInDepts    string      `json:"orderInDepts"`
-	Mobile          int         `json:"mobile"`
+	Mobile          string      `json:"mobile"`
 	ErrMsg          string      `json:"errmsg"`
 	Active          bool        `json:"active"`
 	Avatar          string      `json:"avatar"`
