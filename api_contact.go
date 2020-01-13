@@ -3,7 +3,6 @@ package godingtalk
 import (
 	"fmt"
 	"net/url"
-	"strconv"
 )
 
 type User struct {
@@ -145,10 +144,10 @@ func (c *DingTalkClient) UserInfoByID(userid string) (UserInfo, error) {
 }
 
 //UserInfoByMobile 获取用户详情
-func (c *DingTalkClient) UseridByMobile(mobile int) (string, error) {
+func (c *DingTalkClient) UseridByMobile(mobile string) (string, error) {
 	var data UserInfo
 	params := url.Values{}
-	params.Add("mobile", strconv.Itoa(mobile))
+	params.Add("mobile", mobile)
 	err := c.httpRPC("user/get_by_mobile", params, nil, &data)
 	return data.Userid, err
 }
