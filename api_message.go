@@ -23,6 +23,21 @@ func (c *DingTalkClient) SendAppMessage(agentID string, touser string, msg strin
 	return err
 }
 
+//SendOATextMessage is 发送普通文本消息
+func (c *DingTalkClient) SendOATextMessage(agentID string, touser string, msg string)  error{
+	request := map[string]interface{}{
+		"touser":  touser,
+		"agentid": agentID,
+		"msgtype": "text",
+		"text": map[string]interface{}{
+			"content": msg,
+		},
+	}
+	var data OAPIResponse
+	err := c.httpRPC("message/send", nil, request, &data)
+	return  err
+}
+
 //SendAppActionCardMessage
 func (c *DingTalkClient) SendAppActionCardMessage(agentID string, touser string, msg ActionCardMessage) error {
 	if agentID == "" {
