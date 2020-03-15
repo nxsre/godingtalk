@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	dingtalk "github.com/soopsio/godingtalk"
+	dingtalk "github.com/nxsre/godingtalk"
 )
 
 var msgType string

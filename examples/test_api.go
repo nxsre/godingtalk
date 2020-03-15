@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/soopsio/godingtalk"
+	"github.com/nxsre/godingtalk"
 )
 
 func main() {
