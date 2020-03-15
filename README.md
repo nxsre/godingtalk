@@ -9,7 +9,7 @@ Check out DingTalk Open API document at: https://ding-doc.dingtalk.com/
 Fetch the SDK
 ```
 export GOPATH=`pwd`
-go get github.com/soopsio/godingtalk
+go get github.com/nxsre/godingtalk
 ```
 
 ### Example code to send a micro app message
@@ -80,13 +80,13 @@ more info at: http://hugozhu.myalert.info/2016/05/15/67-use-free-google-cloud-se
 
 ```
 export GOPATH=`pwd`
-go get github.com/soopsio/godingtalk/demo/github/appengine
+go get github.com/nxsre/godingtalk/demo/github/appengine
 ```
 
 Modify `app.yaml`
 
 ```
-cd src/github.com/soopsio/godingtalk/demo/github/appengine
+cd src/github.com/nxsre/godingtalk/demo/github/appengine
 cat app.yaml
 application: github-alert-<random_number>
 version: 1

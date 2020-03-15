@@ -1,4 +1,4 @@
-module github.com/soopsio/godingtalk
+module github.com/nxsre/godingtalk
 
 go 1.13
 
