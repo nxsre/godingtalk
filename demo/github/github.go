@@ -7,11 +7,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"time"
 
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/memcache"
 
 	"strings"
 
@@ -48,7 +46,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	// 	Context: context,
 	// 	AllowInvalidServerCertificate: true,
 	// }
-	c.Cache = NewMemCache(context, ".access_token")
+	c.Cache = NewZeroCache(context, ".access_token")
 	refresh_token_error := c.RefreshAccessToken()
 
 	msg := godingtalk.OAMessage{}
@@ -93,11 +91,14 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	msg.Body.Author = *event.Sender.Login
 
-	_, err = c.SendOAMessage(os.Getenv("SENDER_ID"), os.Getenv("CHAT_ID"), msg)
+	data, err := c.SendOAMessage(os.Getenv("SENDER_ID"), os.Getenv("CHAT_ID"), msg)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("%v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("send error: %v %v", err, data), http.StatusInternalServerError)
 	} else if refresh_token_error != nil {
-		http.Error(w, fmt.Sprintf("%v", refresh_token_error), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("refresh error: %v", refresh_token_error), http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "%v", data)
 	}
 }
 
@@ -122,42 +123,17 @@ func verifySignature(secret []byte, signature string, body []byte) bool {
 	return hmac.Equal(signBody(secret, body), actual)
 }
 
-type MemCache struct {
-	ctx context.Context
-	key string
+type ZeroCache struct {
 }
 
-func NewMemCache(ctx context.Context, key string) *MemCache {
-	return &MemCache{
-		ctx: ctx,
-		key: key,
-	}
+func NewZeroCache(ctx context.Context, key string) *ZeroCache {
+	return &ZeroCache{}
 }
 
-func (c *MemCache) Set(data godingtalk.Expirable) error {
-	bytes, err := json.Marshal(data)
-	if err == nil {
-		item := &memcache.Item{
-			Key:        c.key,
-			Value:      bytes,
-			Expiration: time.Duration(data.ExpiresIn()) * time.Second,
-		}
-		err = memcache.Set(c.ctx, item)
-	}
-	return err
+func (c *ZeroCache) Set(data godingtalk.Expirable) error {
+	return nil
 }
 
-func (c *MemCache) Get(data godingtalk.Expirable) error {
-	item, err := memcache.Get(c.ctx, c.key)
-	if err == nil {
-		err = json.Unmarshal(item.Value, data)
-		if err == nil {
-			created := data.CreatedAt()
-			expires := data.ExpiresIn()
-			if err == nil && time.Now().Unix() > created+int64(expires-60) {
-				err = errors.New("Data is already expired")
-			}
-		}
-	}
-	return err
+func (c *ZeroCache) Get(data godingtalk.Expirable) error {
+	return errors.New("Not found")
 }
