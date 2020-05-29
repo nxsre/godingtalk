@@ -8,6 +8,9 @@ require (
 	github.com/ipandtcp/godingtalk v0.0.0-20180410032244-ca3d6ac197fb
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/json-iterator/go v1.1.9
+	github.com/russross/blackfriday v2.0.0+incompatible // indirect
+	github.com/russross/blackfriday/v2 v2.0.1 // indirect
+	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	golang.org/x/net v0.0.0-20190603091049-60506f45cf65
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/api v0.20.0

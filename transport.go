@@ -2,8 +2,12 @@ package godingtalk
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"crypto/hmac"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,6 +15,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
 
 const typeJSON = "application/json"
@@ -38,6 +43,20 @@ func (c *DingTalkClient) httpRPC(path string, params url.Values, requestData int
 			params.Set("access_token", c.AccessToken)
 		}
 	}
+
+	if c.RobotToken != "" {
+		params.Add("access_token", c.RobotToken)
+	}
+
+	if c.RobotSecret != "" {
+		timestamp := fmt.Sprint(time.Now().UnixNano() / 1e6)
+		params.Add("timestamp", timestamp)
+		signStr := timestamp + "\n" + c.RobotSecret
+		sha256 := hmac.New(sha256.New, []byte(c.RobotSecret))
+		sha256.Write([]byte(signStr))
+		params.Add("sign", base64.StdEncoding.EncodeToString(sha256.Sum(nil)))
+	}
+
 	return c.httpRequest(path, params, requestData, responseData)
 }
 

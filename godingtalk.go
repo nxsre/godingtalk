@@ -28,6 +28,10 @@ type DingTalkClient struct {
 	SnsAppID       string
 	SnsAppSecret   string
 	SnsAccessToken string
+
+	//群机器人消息
+	RobotToken  string
+	RobotSecret string
 }
 
 //Unmarshallable is
