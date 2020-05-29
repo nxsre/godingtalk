@@ -5,6 +5,19 @@ import (
 	"strconv"
 )
 
+//SendToConversation is 发送普通会话消息
+func (c *DingTalkClient) SendToConversationOAMessage(userID string, cid string, msg OAMessage) error {
+	var data OAPIResponse
+	request := map[string]interface{}{
+		"sender": userID,
+		"cid":    cid,
+		"msgtype": "oa",
+		"msg":    msg,
+	}
+	err := c.httpRPC("message/send_to_conversation", nil, request, &data)
+	return err
+}
+
 //SendAppMessage is 发送企业会话消息
 func (c *DingTalkClient) SendAppMessage(agentID string, touser string, msg string) error {
 	if agentID == "" {
@@ -24,7 +37,7 @@ func (c *DingTalkClient) SendAppMessage(agentID string, touser string, msg strin
 }
 
 //SendOATextMessage is 发送普通文本消息
-func (c *DingTalkClient) SendOATextMessage(agentID string, touser string, msg string)  error{
+func (c *DingTalkClient) SendOATextMessage(agentID string, touser string, msg string) error {
 	request := map[string]interface{}{
 		"touser":  touser,
 		"agentid": agentID,
@@ -35,7 +48,7 @@ func (c *DingTalkClient) SendOATextMessage(agentID string, touser string, msg st
 	}
 	var data OAPIResponse
 	err := c.httpRPC("message/send", nil, request, &data)
-	return  err
+	return err
 }
 
 //SendAppActionCardMessage
@@ -45,10 +58,10 @@ func (c *DingTalkClient) SendAppActionCardMessage(agentID string, touser string,
 	}
 	var data OAPIResponse
 	request := map[string]interface{}{
-		"touser":  touser,
-		"agentid": agentID,
-		"msgtype": "action_card",
-		"action_card":      msg,
+		"touser":      touser,
+		"agentid":     agentID,
+		"msgtype":     "action_card",
+		"action_card": msg,
 	}
 	err := c.httpRPC("message/send", nil, request, &data)
 	return err
@@ -183,21 +196,25 @@ type ActionCardMessageBtn struct {
 
 //OAMessage is the Message for OA
 type OAMessage struct {
-	URL   string `json:"message_url"`
-	PcURL string `json:"pc_message_url"`
-	Head  struct {
-		BgColor string `json:"bgcolor,omitempty"`
-		Text    string `json:"text,omitempty"`
-	} `json:"head,omitempty"`
-	Body struct {
-		Title     string          `json:"title,omitempty"`
-		Form      []OAMessageForm `json:"form,omitempty"`
-		Rich      OAMessageRich   `json:"rich,omitempty"`
-		Content   string          `json:"content,omitempty"`
-		Image     string          `json:"image,omitempty"`
-		FileCount int             `json:"file_count,omitempty"`
-		Author    string          `json:"author,omitempty"`
-	} `json:"body,omitempty"`
+	URL   string        `json:"message_url"`
+	PcURL string        `json:"pc_message_url"`
+	Head  OAMessageHead `json:"head,omitempty"`
+	Body  OAMessageBody `json:"body,omitempty"`
+}
+
+type OAMessageHead struct {
+	BgColor string `json:"bgcolor,omitempty"`
+	Text    string `json:"text,omitempty"`
+}
+
+type OAMessageBody struct {
+	Title     string          `json:"title,omitempty"`
+	Form      []OAMessageForm `json:"form,omitempty"`
+	Rich      OAMessageRich   `json:"rich,omitempty"`
+	Content   string          `json:"content,omitempty"`
+	Image     string          `json:"image,omitempty"`
+	FileCount int             `json:"file_count,omitempty"`
+	Author    string          `json:"author,omitempty"`
 }
 
 type OAMessageForm struct {

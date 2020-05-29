@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	dd "github.com/hugozhu/godingtalk"
+	dd "github.com/nxsre/godingtalk"
 
-	"golang.org/x/net/context"
+	"context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	calendar "google.golang.org/api/calendar/v3"
